@@ -215,7 +215,7 @@ set lbr
 set tw=500
 
 set ai "Auto indent
-set si "Smart indent
+set cindent
 set wrap "Wrap lines
 
 

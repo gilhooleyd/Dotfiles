@@ -1,0 +1,14 @@
+[user]
+	name = David J Gilhooley
+	email = djg5@princeton.edu
+[core]
+	editor = vim
+	autocrlf = input
+[push]
+	default = simple
+[color]
+	ui = true 
+[github]
+	user = gilhooleyd
+[http]
+	cookiefile = ~/.gitcookies

@@ -28,7 +28,8 @@ Plugin 'chriskempson/base16-vim'
 Plugin 'morhetz/gruvbox'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
-
+Plugin 'easymotion/vim-easymotion'
+Plugin 'mattn/calendar-vim'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -50,12 +51,33 @@ let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => WIKI OPTIONS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:vimwiki_list = [{'path':'~/Dropbox/Notes',
-    \ 'path_html':'~/Dropbox/Notes/html/',
-    \ 'template_path':'~/Dropbox/Notes/templates/',
-    \ 'template_default': 'def_template',
-    \ 'template_ext': '.html'}]
+" vimwiki 
+let wiki_1 = {}
+let wiki_1.path = '~/Dropbox/Notes/Personal/'
+let wiki_1.path_html = '~/Dropbox/Notes/Personal/html/'
+let wiki_1.template_default = 'def_template'
+let wiki_1.template_path = '~/Dropbox/Notes/Personal/templates/'
 
+let wiki_2 = {}
+let wiki_2.path = '~/Dropbox/Notes/Work/'
+let wiki_2.path_html = '~/Dropbox/Notes/Work/html/'
+let wiki_2.template_default = 'def_template'
+let wiki_2.template_path = '~/Dropbox/Notes/Work/templates/'
+
+let g:vimwiki_list = [wiki_1, wiki_2]
+" let g:vimwiki_list = [{'path':'~/Dropbox/Notes',
+"     \ 'path_html':'~/Dropbox/Notes/html/',
+"     \ 'template_path':'~/Dropbox/Notes/templates/',
+"     \ 'template_default': 'def_template',
+"     \ 'template_ext': '.html'}]
+let g:vimwiki_use_mouse = 1
+let g:vimwiki_hl_headers = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Easy Motion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <Leader>l <Plug>(easymotion-overwin-line)
+map <Leader>w <Plug>(easymotion-overwin-w)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

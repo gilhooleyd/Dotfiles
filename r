@@ -15,54 +15,67 @@ class bcolors:
 
 def colored(s, color):
     return color + s + bcolors.ENDC
+
+def cdCWDstring(folder):
+    return "cd " + TOP + "/" + folder + "/ ; "
+
 args = sys.argv
-branches = {}
-folders = {}
-info_f = os.environ["TOP"] + "/r-helper"
+folders = []
+TOP = ""
+CWD = os.getcwd()
+
+if not("TOP" in os.environ):
+    print("PLEASE SET TOP VARIABLE")
+    exit(1)
+TOP = os.environ["TOP"]
+info_f = TOP + "/r-helper"
 
 # load in file
 f = open(info_f)
 for s in f:
         s = s.strip()
-        words = s.split(" ")
-        if not(words[0] in branches):
-            branches[words[0]] = []
-        branches[words[0]].append(words[1])
-
-        if not(words[1] in folders):
-            folders[words[1]] = []
-        folders[words[1]].append(words[0])
+        if not(s in folders):
+            folders.append(s)
 f.close()
-# print (branches)
-# print (folders)
 
 f = open(info_f, "a+")
+
 if (args[1] == "start"):
-        if os.getcwd() in folders:
-            if args[2] in folders[os.getcwd()]:
-                print("That branch exists already")
-                # Figure out some way to return
-        f.write(args[2] + " " + os.getcwd() + "\n")
-        subprocess.call("cd " + os.getcwd() + "/ ; " + "repo start " + args[2], shell=True)
-if (args[1] == "start-all"):
+        toplen = len(TOP)
+        if TOP != CWD[:toplen]:
+            print("Must be inside TOP")
+            exit(1)
+        folder = CWD[toplen:]
+        f.write(folder + "\n")
+        subprocess.call(cdCWDstring(folder) + "repo start " + args[2], shell=True)
+
+elif (args[1] == "start-all"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
-            subprocess.call("cd " + folder + "/ ; " + "repo start " + args[2], shell=True)
+            subprocess.call(cdCWDstring(folder) + "repo start " + args[2], shell=True)
+
 elif (args[1] == "status"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
-            subprocess.call("cd " + folder + "/ ; " + "git status ", shell=True)
-            subprocess.call("cd " + folder + "/ ; " + "git changes", shell=True)
+            subprocess.call(cdCWDstring(folder) + "git status ", shell=True)
+            subprocess.call(cdCWDstring(folder) + "git changes", shell=True)
             print("")
+
 elif (args[1] == "checkout"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
-            subprocess.call("cd " + folder + "/ ; " + "repo start " + args[2], shell=True)
+            subprocess.call(cdCWDstring(folder) + "repo start " + args[2], shell=True)
             print("")
+
 elif (args[1] == "branch"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
-            subprocess.call("cd " + folder + "/ ; " + "git branch ", shell=True)
+            subprocess.call(cdCWDstring(folder) + "git branch ", shell=True)
             print("")
+
 elif (args[1] == "sync"):
-        subprocess.call("cd " + os.getcwd() + "/ ; " + "repo sync -j4 -c --no-tags ./", shell=True)
+        subprocess.call(cdCWDstring(folder) + "repo sync -j4 -c --no-tags ./", shell=True)
+
+else:
+    print ("COMMAND NOT SUPPORTED")
+    exit(1)

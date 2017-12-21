@@ -16,6 +16,8 @@ class bcolors:
 def colored(s, color):
     return color + s + bcolors.ENDC
 
+def cdstring(folder):
+    return "cd " + folder + "/ ; "
 def cdCWDstring(folder):
     return "cd " + TOP + "/" + folder + "/ ; "
 
@@ -31,7 +33,7 @@ TOP = os.environ["TOP"]
 info_f = TOP + "/r-helper"
 
 # load in file
-f = open(info_f)
+f = open(info_f, "r+")
 for s in f:
         s = s.strip()
         if not(s in folders):
@@ -75,6 +77,22 @@ elif (args[1] == "branch"):
 
 elif (args[1] == "sync"):
         subprocess.call(cdCWDstring(folder) + "repo sync -j4 -c --no-tags ./", shell=True)
+
+elif (args[1] == "save-all"):
+        subprocess.call("mkdir -p " + args[2], shell=True)
+        for folder in folders:
+                print(colored(folder, bcolors.OKGREEN))
+                subprocess.call("mkdir -p " + args[2] + "/" + folder, shell=True)
+                subprocess.call(cdCWDstring(folder) + "git format-patch -o " + args[2] + "/"
+                        + folder + "/ HEAD@{upstream}..", shell=True)
+
+elif (args[1] == "restore-all"):
+        subprocess.call("mkdir -p " + args[2], shell=True)
+        for folder in folders:
+                print(colored(folder, bcolors.OKGREEN))
+                subprocess.call("mkdir -p " + args[2] + "/" + folder, shell=True)
+                subprocess.call(cdCWDstring(folder) + "git am -3 " + args[2] + "/"
+                        + folder + "/*", shell=True)
 
 else:
     print ("COMMAND NOT SUPPORTED")

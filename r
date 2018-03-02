@@ -72,11 +72,37 @@ elif (args[1] == "checkout"):
 elif (args[1] == "branch"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
-            subprocess.call(cdCWDstring(folder) + "git branch ", shell=True)
+            extra = ""
+            if len(args) >= 3:
+                extra = " ".join(args[2:])
+            subprocess.call(cdCWDstring(folder) + "git branch " + extra, shell=True)
             print("")
 
 elif (args[1] == "sync"):
         subprocess.call(cdCWDstring(folder) + "repo sync -j4 -c --no-tags ./", shell=True)
+
+elif (args[1] == "update"):
+        for folder in folders:
+            print(colored(folder, bcolors.OKGREEN))
+            subprocess.call(cdCWDstring(folder) + "git rebase HEAD@{upstream}", shell=True)
+
+elif (args[1] == "rebase-all"):
+        branches = subprocess.Popen(cdCWDstring(folders[0]) + "git branch",
+                shell=True, stdout=subprocess.PIPE).communicate()
+        for branch in branches[0].split("\n"):
+            if (branch == None):
+                continue
+            branch = branch.replace("*", "")
+            print(colored(branch, bcolors.OKGREEN))
+            for folder in folders:
+                print(colored(folder, bcolors.OKGREEN))
+                err = subprocess.call(cdCWDstring(folder) + " git checkout " +
+                        branch + " ; git rebase HEAD@{upstream}", shell=True)
+                if err != 0:
+                    exit(1)
+
+elif (args[1] == "sync-all"):
+        subprocess.call(cdCWDstring(CWD) + "repo sync -j4 -c --no-tags", shell=True)
 
 elif (args[1] == "save-all"):
         subprocess.call("mkdir -p " + args[2], shell=True)

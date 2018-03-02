@@ -2,6 +2,7 @@ set nocompatible              " be iMproved, required
 set clipboard=unnamed
 filetype off                  " required
 
+
 augroup myvimrc
 	autocmd!
 	autocmd QuickFixCmdPost [^l]* cwindow
@@ -33,6 +34,10 @@ set guioptions-=l
 set guioptions-=L
 set guifont=Hack:h12
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => WIKI OPTIONS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -61,6 +66,9 @@ filetype plugin indent on    " required
 set foldmethod=syntax
 set foldlevel=1
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Powerline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline_powerline_fonts = 1
 let g:airline_section_warning = ''
 let g:airline_section_error = ''
@@ -68,10 +76,6 @@ let g:airline_section_error = ''
 let g:airline_section_x = ""
 let g:airline_section_y = ""
 let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
-"let g:airline_left_sep = ''
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_sep = ''
-"let g:airline_right_alt_sep = ''
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => WIKI OPTIONS
@@ -105,6 +109,9 @@ let g:vimwiki_hl_headers = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <Leader>l <Plug>(easymotion-overwin-line)
 map <Leader>w <Plug>(easymotion-overwin-w)
+map <Leader>co :cwindow<cr>
+map <Leader>cl :cclose<cr>
+map <Leader>gw viwy :grep -R <C-R>" .
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -262,7 +269,6 @@ set smarttab
 set shiftwidth=8
 set tabstop=8
 set noexpandtab
-set textwidth=80
 
 " Linebreak on 500 characters
 set lbr
@@ -473,4 +479,7 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
-
+" Highlight extra whitespace
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhitespace /\s\+$/
+highlight ExtraWhitespace ctermbg=red guibg=red

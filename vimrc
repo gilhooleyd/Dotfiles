@@ -2,12 +2,41 @@ set nocompatible              " be iMproved, required
 set clipboard=unnamed
 filetype off                  " required
 
+
+augroup myvimrc
+	autocmd!
+	autocmd QuickFixCmdPost [^l]* cwindow
+	autocmd QuickFixCmdPost l*    lwindow
+augroup END
+
+function! s:ExecuteInShell(command)
+  let command = join(map(split(a:command), 'expand(v:val)'))
+  let winnr = bufwinnr('^' . command . '$')
+  silent! execute  winnr < 0 ? 'botright vnew ' . fnameescape(command) : winnr . 'wincmd w'
+  setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
+  echo 'Execute ' . command . '...'
+  silent! execute 'silent %!'. command
+  silent! execute 'resize '
+  silent! redraw
+  silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
+  silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>'
+  echo 'Shell command ' . command . ' executed.'
+endfunction
+command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+
+set colorcolumn=80
+highlight ColorColumn ctermbg=7
+
 " turns scrollbars off
 set guioptions-=R
 set guioptions-=r
 set guioptions-=l
 set guioptions-=L
 set guifont=Hack:h12
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => WIKI OPTIONS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -30,12 +59,16 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'mattn/calendar-vim'
+Plugin 'vim-airline/vim-airline-themes'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 set foldmethod=syntax
 set foldlevel=1
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Powerline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline_powerline_fonts = 1
 let g:airline_section_warning = ''
 let g:airline_section_error = ''
@@ -43,10 +76,6 @@ let g:airline_section_error = ''
 let g:airline_section_x = ""
 let g:airline_section_y = ""
 let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
-"let g:airline_left_sep = ''
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_sep = ''
-"let g:airline_right_alt_sep = ''
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => WIKI OPTIONS
@@ -57,14 +86,16 @@ let wiki_1.path = '~/Dropbox/Notes/Personal/'
 let wiki_1.path_html = '~/Dropbox/Notes/Personal/html/'
 let wiki_1.template_default = 'def_template'
 let wiki_1.template_path = '~/Dropbox/Notes/Personal/templates/'
+let wiki_1.template_ext = '.html'
 
 let wiki_2 = {}
 let wiki_2.path = '~/Dropbox/Notes/Work/'
 let wiki_2.path_html = '~/Dropbox/Notes/Work/html/'
 let wiki_2.template_default = 'def_template'
 let wiki_2.template_path = '~/Dropbox/Notes/Work/templates/'
+let wiki_2.template_ext = '.html'
 
-let g:vimwiki_list = [wiki_1, wiki_2]
+let g:vimwiki_list = [wiki_2, wiki_1]
 " let g:vimwiki_list = [{'path':'~/Dropbox/Notes',
 "     \ 'path_html':'~/Dropbox/Notes/html/',
 "     \ 'template_path':'~/Dropbox/Notes/templates/',
@@ -78,6 +109,9 @@ let g:vimwiki_hl_headers = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <Leader>l <Plug>(easymotion-overwin-line)
 map <Leader>w <Plug>(easymotion-overwin-w)
+map <Leader>co :cwindow<cr>
+map <Leader>cl :cclose<cr>
+map <Leader>gw viwy :grep -R <C-R>" .
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -177,6 +211,8 @@ set nu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
+colorscheme david-scheme
+let g:airline_theme='base16_eighties'
 
 "if has("gui_running")
 "    colorscheme wombat
@@ -184,9 +220,9 @@ syntax enable
 "endif
 "
 
-colorscheme gruvbox
-"let g:gruvbox_italic = 1
-let g:gruvbox_dark_theme = 'hard' 
+" colorscheme gruvbox
+" "let g:gruvbox_italic = 1
+" let g:gruvbox_dark_theme = 'hard' 
 
 
 hi CursorLineNR cterm=bold
@@ -230,12 +266,12 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=8
+set tabstop=8
+set noexpandtab
 
 " Linebreak on 500 characters
 set lbr
-set tw=500
 
 set ai "Auto indent
 set cindent
@@ -443,4 +479,7 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
-
+" Highlight extra whitespace
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhitespace /\s\+$/
+highlight ExtraWhitespace ctermbg=red guibg=red

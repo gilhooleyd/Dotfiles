@@ -1,6 +1,29 @@
+[alias]
+	fix = "!f() { ${EDITOR} `git diff --name-only`; }; f"
+	co  = checkout
+	cob = checkout -b
+	amend = commit -a --amend
+	changes = "!git log --pretty=oneline $(git rev-parse --abbrev-ref HEAD@{upstream}).."
+	st  = status
+	sh  = show
+	sn = "!f() { git show HEAD~$1 ; }; f"
+	cp = "cherry-pick"
+	cpc = "cherry-pick --continue"
+	cpa = "cherry-pick --abort"
+	rbi = "!git rebase --autosquash -i $(git rev-parse --abbrev-ref HEAD@{upstream})"
+	rbc = "rebase --continue"
+	rba = "rebase --abort"
+	pp = "!git format-patch $(git rev-parse --abbrev-ref HEAD@{upstream}).."
+	pop = "!f() { git format-patch HEAD~$1 && git reset --hard HEAD~$1 ; }; f"
+	drop = "reset --hard HEAD^"
+	fixup = "!f() { git commit --fixup HEAD~$1 ; }; f"
+[nvidia]
+	username = dgilhooley
 [user]
-	name = David J Gilhooley
-	email = djg5@princeton.edu
+	name = David Gilhooley
+	email = dgilhooley@nvidia.com
+[color]
+	ui = auto
 [core]
 	editor = vim
 	autocrlf = input
@@ -12,4 +35,3 @@
 	user = gilhooleyd
 [http]
 	cookiefile = ~/.gitcookies
-

@@ -1,6 +1,8 @@
 set nocompatible              " be iMproved, required
-set clipboard=unnamed
 filetype off                  " required
+
+
+set fillchars+=vert:│
 
 
 augroup myvimrc

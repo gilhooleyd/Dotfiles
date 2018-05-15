@@ -85,19 +85,22 @@ elif (args[1] == "update"):
         for folder in folders:
             print(colored(folder, bcolors.OKGREEN))
             subprocess.call(cdCWDstring(folder) + "git rebase HEAD@{upstream}", shell=True)
-
+elif (args[1] == "run"):
+        for folder in folders:
+            print(colored(folder, bcolors.OKGREEN))
+            subprocess.call(cdCWDstring(folder) + " ".join(args[2:]), shell=True)
 elif (args[1] == "rebase-all"):
         branches = subprocess.Popen(cdCWDstring(folders[0]) + "git branch",
                 shell=True, stdout=subprocess.PIPE).communicate()
-        for branch in branches[0].split("\n"):
-            if (branch == None):
-                continue
-            branch = branch.replace("*", "")
-            print(colored(branch, bcolors.OKGREEN))
-            for folder in folders:
-                print(colored(folder, bcolors.OKGREEN))
+        for folder in folders:
+            print(colored(folder, bcolors.OKGREEN))
+            for branch in branches[0].split("\n"):
+                if (branch == None):
+                    continue
+                branch = branch.replace("*", "")
+                print(colored(branch, bcolors.OKGREEN))
                 err = subprocess.call(cdCWDstring(folder) + " git checkout " +
-                        branch + " ; git rebase HEAD@{upstream}", shell=True)
+                            branch + " ; git rebase HEAD@{upstream}", shell=True)
                 if err != 0:
                     exit(1)
 

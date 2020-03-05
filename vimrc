@@ -1,32 +1,20 @@
 set nocompatible              " be iMproved, required
-filetype off                  " required
 
 
 set fillchars+=vert:│
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Google Options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-augroup myvimrc
-	autocmd!
-	autocmd QuickFixCmdPost [^l]* cwindow
-	autocmd QuickFixCmdPost l*    lwindow
-augroup END
+source /usr/share/vim/google/google.vim
+"source /usr/share/vim/google/gtags.vim
 
-function! s:ExecuteInShell(command)
-  let command = join(map(split(a:command), 'expand(v:val)'))
-  let winnr = bufwinnr('^' . command . '$')
-  silent! execute  winnr < 0 ? 'botright vnew ' . fnameescape(command) : winnr . 'wincmd w'
-  setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
-  echo 'Execute ' . command . '...'
-  silent! execute 'silent %!'. command
-  silent! execute 'resize '
-  silent! redraw
-  silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
-  silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>'
-  echo 'Shell command ' . command . ' executed.'
-endfunction
-command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+" Glug youcompleteme-google
 
-set colorcolumn=80
+source ~/fuchsia/scripts/vim/fuchsia.vim
+
+set colorcolumn=100
 highlight ColorColumn ctermbg=7
 
 " turns scrollbars off
@@ -37,9 +25,10 @@ set guioptions-=L
 set guifont=Hack:h12
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => WIKI OPTIONS
+" => VUNDLE OPTIONS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+filetype off                  " required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -48,10 +37,9 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
+Plugin 'tpope/vim-dispatch'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-notes'
-Plugin 'xolox/vim-session'
-Plugin 'vimwiki/vimwiki'
 Plugin 'scrooloose/syntastic'
 Plugin 'majutsushi/tagbar'
 Plugin 'vim-airline/vim-airline'
@@ -62,11 +50,14 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'mattn/calendar-vim'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+Plugin 'idanarye/vim-merginal'
+Plugin 'arcticicestudio/nord-vim'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-set foldmethod=syntax
-set foldlevel=1
+set foldmethod=indent
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Powerline
@@ -80,33 +71,6 @@ let g:airline_section_y = ""
 let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => WIKI OPTIONS
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vimwiki 
-let wiki_1 = {}
-let wiki_1.path = '~/Dropbox/Notes/Personal/'
-let wiki_1.path_html = '~/Dropbox/Notes/Personal/html/'
-let wiki_1.template_default = 'def_template'
-let wiki_1.template_path = '~/Dropbox/Notes/Personal/templates/'
-let wiki_1.template_ext = '.html'
-
-let wiki_2 = {}
-let wiki_2.path = '~/Dropbox/Notes/Work/'
-let wiki_2.path_html = '~/Dropbox/Notes/Work/html/'
-let wiki_2.template_default = 'def_template'
-let wiki_2.template_path = '~/Dropbox/Notes/Work/templates/'
-let wiki_2.template_ext = '.html'
-
-let g:vimwiki_list = [wiki_2, wiki_1]
-" let g:vimwiki_list = [{'path':'~/Dropbox/Notes',
-"     \ 'path_html':'~/Dropbox/Notes/html/',
-"     \ 'template_path':'~/Dropbox/Notes/templates/',
-"     \ 'template_default': 'def_template',
-"     \ 'template_ext': '.html'}]
-let g:vimwiki_use_mouse = 1
-let g:vimwiki_hl_headers = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Easy Motion
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <Leader>l <Plug>(easymotion-overwin-line)
@@ -114,6 +78,60 @@ map <Leader>w <Plug>(easymotion-overwin-w)
 map <Leader>co :cwindow<cr>
 map <Leader>cl :cclose<cr>
 map <Leader>gw viwy :grep -R <C-R>" .
+
+set tags+=~/fuchsia/zircon/tags,~/fuchsia/garnet/tags
+set tags+=~/fuchsia/out/default.zircon/gen/tags
+
+command TagMake :!make_tags<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Personal Keybindings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+let g:mapleader = ","
+
+
+
+map <leader>sv :vsplit <cr>
+map <leader>sh :split  <cr>
+map <leader>x  :x <cr>
+map <leader>w  :w <cr>
+ "
+" Shortcuts using <leader>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
+
+map <leader>ee :Ex<cr>
+map <leader>ev :Vex<cr>
+map <leader>es :Sex<cr>
+
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
+
+" Make keybindings
+map <leader>r :Dispatch fx reboot<cr>
+map <leader>m :Make<cr>
+map <leader>d :Dispatch 
+
+" Fuzzy Finding keybindings
+map <leader>ft :Tags <cr>
+map <leader>ff :Files <cr>
+map <leader>fb :Buffers <cr>
+map <leader>fg :Ag <cr>
+map <leader>fm :Marks <cr>
+
+" Git keybindings
+map <leader>gg :Gstatus <cr>
+map <leader>gl :Glog -10 -- % <cr>
+map <leader>gv :Gblame <cr>
+map <leader>gb :Merginal <cr>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -126,11 +144,6 @@ filetype indent on
 
 " Set to auto read when a file is changed from the outside
 set autoread
-
-" With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
 
 " Fast saving
 nmap <leader>w :w!<cr>
@@ -213,26 +226,27 @@ set nu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
-colorscheme david-scheme
-let g:airline_theme='base16_eighties'
-
-"if has("gui_running")
-"    colorscheme wombat
-"    set cursorline
-"endif
-"
-
-" colorscheme gruvbox
-" "let g:gruvbox_italic = 1
-" let g:gruvbox_dark_theme = 'hard' 
-
 
 hi CursorLineNR cterm=bold
 augroup CLNRSet
         autocmd! ColorScheme * hi CursorLineNR cterm=bold
 augroup END
 
-set background=dark
+augroup nord-theme-overrides
+  autocmd!
+  " Use 'nord7' as foreground color for Vim comment titles.
+  autocmd ColorScheme nord highlight Comment ctermfg=6
+  autocmd ColorScheme nord highlight Folded ctermfg=15 ctermbg=0
+  autocmd ColorScheme nord highlight TabLineSel ctermfg=15 ctermbg=0 cterm=Bold,None
+  autocmd ColorScheme nord highlight TabLine ctermfg=4 ctermbg=0
+  autocmd ColorScheme nord highlight TabLineFill cterm=Bold,None ctermfg=15 ctermbg=4
+
+augroup END
+
+hi TabLineFill cterm=Bold,None ctermfg=15 ctermbg=4
+hi Comment ctermfg=8
+
+colorscheme nord
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -267,10 +281,8 @@ set expandtab
 " Be smart when using tabs ;)
 set smarttab
 
-" 1 tab == 4 spaces
-set shiftwidth=8
-set tabstop=8
-set noexpandtab
+set shiftwidth=2
+set tabstop=2
 
 " Linebreak on 500 characters
 set lbr
@@ -390,36 +402,6 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
-
-" Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
-
-" Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
-
-" Toggle paste mode on and off
-map <leader>pp :setlocal paste!<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Personal Keybindings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
- map <leader>sv :vsplit <cr>
- map <leader>sh :split  <cr>
- 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions

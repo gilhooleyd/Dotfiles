@@ -3,26 +3,12 @@ set nocompatible              " be iMproved, required
 
 set fillchars+=vert:│
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Google Options
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-source /usr/share/vim/google/google.vim
-"source /usr/share/vim/google/gtags.vim
-
-" Glug youcompleteme-google
-
+if $FUCHSIA_DIR != ""
 source ~/fuchsia/scripts/vim/fuchsia.vim
+endif
 
 set colorcolumn=100
 highlight ColorColumn ctermbg=7
-
-" turns scrollbars off
-set guioptions-=R
-set guioptions-=r
-set guioptions-=l
-set guioptions-=L
-set guifont=Hack:h12
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VUNDLE OPTIONS
@@ -36,19 +22,15 @@ call vundle#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
+Plugin 'ycm-core/YouCompleteMe'
+Plugin 'vimwiki/vimwiki'
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-dispatch'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-notes'
-Plugin 'scrooloose/syntastic'
-Plugin 'majutsushi/tagbar'
 Plugin 'vim-airline/vim-airline'
-Plugin 'chriskempson/base16-vim'
-Plugin 'morhetz/gruvbox'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'mattn/calendar-vim'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
@@ -70,38 +52,39 @@ let g:airline_section_x = ""
 let g:airline_section_y = ""
 let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
 
+command TagMake :!make_tags<cr>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Easy Motion
+" => Tags
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tags+=~/fuchsia/zircon/tags,~/fuchsia/garnet/tags
+set tags+=~/fuchsia/out/default.zircon/gen/tags
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Leader Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let mapleader = ","
+let g:mapleader = ","
+
+" YCM
+map <leader>yy :YcmCompleter goto<cr>
+map <leader>yt :YcmCompleter RefactorRename 
+
 map <Leader>l <Plug>(easymotion-overwin-line)
 map <Leader>w <Plug>(easymotion-overwin-w)
 map <Leader>co :cwindow<cr>
 map <Leader>cl :cclose<cr>
 map <Leader>gw viwy :grep -R <C-R>" .
 
-set tags+=~/fuchsia/zircon/tags,~/fuchsia/garnet/tags
-set tags+=~/fuchsia/out/default.zircon/gen/tags
-
-command TagMake :!make_tags<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Personal Keybindings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
-
+map <leader>ss :setlocal spell!<cr>
 
 
 map <leader>sv :vsplit <cr>
 map <leader>sh :split  <cr>
 map <leader>x  :x <cr>
 map <leader>w  :w <cr>
- "
-" Shortcuts using <leader>
+
 map <leader>sn ]s
 map <leader>sp [s
 map <leader>sa zg
@@ -132,6 +115,39 @@ map <leader>gl :Glog -10 -- % <cr>
 map <leader>gv :Gblame <cr>
 map <leader>gb :Merginal <cr>
 
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Disable highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+
+" Close the current buffer
+map <leader>bd :Bclose<cr>
+
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader>tl :tabnext <cr>
+map <leader>th :tabprev <cr>
+
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -145,8 +161,6 @@ filetype indent on
 " Set to auto read when a file is changed from the outside
 set autoread
 
-" Fast saving
-nmap <leader>w :w!<cr>
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
@@ -159,25 +173,11 @@ command W w !sudo tee % > /dev/null
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
-" Avoid garbled characters in Chinese language windows OS
-let $LANG='en'
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-
 " Turn on the WiLd menu
 set wildmenu
 
 " have completion menu act like bash
 set wildmode=longest,list
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-else
-    set wildignore+=.git\*,.hg\*,.svn\*
-endif
 
 "Always show current position
 set ruler
@@ -188,12 +188,6 @@ set hid
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
-
-" In many terminal emulators the mouse works just fine, thus enable it.
-if has('mouse')
-  set mouse=a
-  set ttymouse=xterm2
-endif
 
 " Ignore case when searching
 set ignorecase
@@ -248,20 +242,13 @@ hi Comment ctermfg=8
 
 colorscheme nord
 
-" Set extra options when running in GUI mode
-if has("gui_running")
-    set guioptions-=T
-    set guioptions-=e
-    set t_Co=256
-    set guitablabel=%M\ %t
-endif
-
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
+set fillchars+=vert:│
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -308,8 +295,6 @@ vnoremap <silent> # :call VisualSelection('b', '')<CR>
 map j gj
 map k gk
 
-" Disable highlight when <leader><cr> is pressed
-map <silent> <leader><cr> :noh<cr>
 
 " Smart way to move between windows
 map <C-j> <C-W>j
@@ -317,32 +302,6 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" Close the current buffer
-map <leader>bd :Bclose<cr>
-
-" Close all the buffers
-map <leader>ba :bufdo bd<cr>
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-map <leader>tl :tabnext <cr>
-map <leader>th :tabprev <cr>
-
-" Let 'tl' toggle between this and the last accessed tab
-let g:lasttab = 1
-nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
-au TabLeave * let g:lasttab = tabpagenr()
-
-
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
-" Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers
 try
@@ -351,57 +310,6 @@ try
 catch
 endtry
 
-" Return to last edit position when opening files (You want this!)
-" autocmd BufReadPost *
-"      \ if line("'\"") > 0 && line("'\"") <= line("$") |
-"      \   exe "normal! g`\"" |
-"      \ endif
-" Remember info about open buffers on close
-" set viminfo^=%
-
-
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
-" Always show the status line
-set laststatus=2
-
-" Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
-endif
-
-" Delete trailing white space on save, useful for Python and CoffeeScript ;)
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
@@ -433,14 +341,6 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    endif
-    return ''
-endfunction
 
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()

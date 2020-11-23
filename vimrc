@@ -1,6 +1,5 @@
 set nocompatible              " be iMproved, required
 
-
 set fillchars+=vert:│
 
 if $FUCHSIA_DIR != ""
@@ -22,7 +21,6 @@ call vundle#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plugin 'ycm-core/YouCompleteMe'
 Plugin 'vimwiki/vimwiki'
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-dispatch'
@@ -50,7 +48,7 @@ let g:airline_section_error = ''
 
 let g:airline_section_x = ""
 let g:airline_section_y = ""
-let g:airline_section_z = "%{airline#extensions#tagbar#currenttag()}"
+let g:airline_section_z = ""
 
 command TagMake :!make_tags<cr>
 
@@ -99,7 +97,7 @@ map <leader>pp :setlocal paste!<cr>
 
 " Make keybindings
 map <leader>r :Dispatch fx reboot<cr>
-map <leader>m :Make<cr>
+map <leader>m :Dispatch cmake --build build/ -j 10<cr>
 map <leader>d :Dispatch 
 
 " Fuzzy Finding keybindings

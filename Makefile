@@ -1,10 +1,10 @@
-.PHONY: server
-server: vim
-	ln -s ~/Dotfiles/server-tmux.conf ~/.tmux.conf
+.PHONY: all
+all: vim tmux git
+	echo "DONE"
 
-.PHONY: mac
-mac: vim
-	ln -s ~/Dotfiles/mac-tmux.conf ~/.tmux.conf
+.PHONY: tmux
+tmux:
+	ln -s ~/Dotfiles/tmux.conf ~/.tmux.conf
 
 .PHONY: vim
 vim:
@@ -16,11 +16,6 @@ vim:
 
 git: gitconfig
 	ln -s ~/Dotfiles/gitconfig ~/.gitconfig
-
-.PHONY: i3
-i3: .i3.config
-	mkdir -p ~/.i3/
-	ln -s ~/Dotfiles/.i3.config ~/.i3/config
 
 .PHONY: clean
 clean:

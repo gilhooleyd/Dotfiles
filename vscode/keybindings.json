@@ -1,0 +1,41 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+{
+        "key": "alt+f8",
+        "command": "-editor.action.marker.next",
+        "when": "editorFocus"
+    },
+    {
+        "key": "f8",
+        "command": "-editor.action.marker.nextInFiles",
+        "when": "editorFocus"
+    },
+    {
+        "key": "shift+f8",
+        "command": "-editor.action.marker.prevInFiles",
+        "when": "editorFocus"
+    },
+    {
+        "key": "alt+cmd+o",
+        "command": "-clangd.switchheadersource",
+        "when": "editorTextFocus"
+    },
+//    {
+//        "key": "ctrl+tab",
+//        "command": "workbench.action.openPreviousEditorFromHistory"
+//    },
+//    {
+//        "key": "ctrl+tab",
+//        "command": "workbench.action.quickOpenNavigateNext",
+//        "when": "inQuickOpen"
+//    },
+    {
+        "key": "cmd+w",
+        "command": "workbench.action.closeEditorsInGroup"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.terminal.focusNext",
+        "when": "terminalFocus"
+    },
+]

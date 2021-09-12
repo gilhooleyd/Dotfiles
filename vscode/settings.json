@@ -1,0 +1,101 @@
+{
+    "clangd.path": "~/fuchsia/prebuilt/third_party/clang/linux-x64/bin/clangd",
+    "clangd.arguments": [
+        "--clang-tidy",
+        "--background-index"
+    ],
+    "editor.minimap.enabled": false,
+    "vim.useSystemClipboard": true,
+    "vim.leader": ",",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [",", "s"],
+            "commands": [
+                "clangd.switchheadersource",
+            ]
+        },
+        {
+            "before": [",", "n"],
+            "commands": [
+                "editor.action.marker.nextInFiles",
+            ]
+        },
+        {
+            "before": [",", "n"],
+            "commands": [
+                "editor.action.marker.prevInFiles",
+            ]
+        },
+        {
+            "before": [",", "s", "v"],
+            "commands": [
+                "workbench.action.splitEditorRight",
+            ]
+        },
+        {
+            "before": [",", "s", "h"],
+            "commands": [
+                "workbench.action.splitEditorDown",
+            ]
+        },
+    ],
+    "gitlens.statusBar.enabled": false,
+    "gitlens.codeLens.enabled": false,
+    "gitlens.currentLine.enabled": false,
+    "gitlens.hovers.currentLine.over": "line",
+    "files.watcherExclude": {
+        "**/.DS_Store": true,
+        "**/.cipd": true,
+        "**/.clang-format": true,
+        "**/.clang-tidy": true,
+        "**/.dir-locals.el": true,
+        "**/.git": true,
+        "**/.gitattributes": true,
+        "**/.gitignore": true,
+        "**/.hg": true,
+        "**/.idea": true,
+        "**/.jiri_manifest": true,
+        "**/.jiri_root": true,
+        "**/.ssh": true,
+        "**/.style.yapf": true,
+        "**/.svn": true,
+        "**/AUTHORS": true,
+        "**/CMakeLists.txt": true,
+        "**/CODE_OF_CONDUCT.md": true,
+        "**/CONTRIBUTING.md": true,
+        "**/CVS": true,
+        "**/LICENSE": true,
+        "**/PATENTS": true,
+        "**/buildtools": true,
+        "**/examples": true,
+        "**/garnet/test_data": true,
+        "**/garnet/third_party": true,
+        "**/out": true,
+        "**/prebuilt": true,
+        "**/rustfmt.toml": true,
+        "**/src/chromium": true,
+        "**/topaz": true,
+        "**/zircon/experimental": true,
+        "**/zircon/prebuilt": true,
+        "**/zircon/third_party": true,
+    },
+    "workbench.editor.showTabs": false,
+    "diffEditor.renderSideBySide": false,
+    "terminal.integrated.fontFamily": "Hack",
+    "terminal.integrated.fontSize": "13",
+    "workbench.fontAliasing": "auto",
+    "editor.rulers": [
+        80
+    ],
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.tabs.enabled": true,
+    "workbench.editorAssociations": {
+        "git-rebase-todo": "default"
+    },
+    "cSpell.enableFiletypes": [
+        "!cpp",
+        "!rust"
+    ],
+    "window.zoomLevel": -1,
+    "workbench.colorTheme": "Visual Studio Dark",
+}

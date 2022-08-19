@@ -1,0 +1,2 @@
+python3 ~/Dotfiles/bin/clipboard.py > /tmp/clipboard-server.txt 2>&1 &
+ssh -R 8001:localhost:8001 $@

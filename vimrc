@@ -6,6 +6,10 @@ if $FUCHSIA_DIR != ""
 source ~/fuchsia/scripts/vim/fuchsia.vim
 endif
 
+set mouse=a
+set clipboard=unnamedplus   " using system clipboard
+set ttyfast                 " Speed up scrolling in Vim
+
 set colorcolumn=100
 highlight ColorColumn ctermbg=7
 
@@ -34,6 +38,7 @@ Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'idanarye/vim-merginal'
 Plugin 'arcticicestudio/nord-vim'
+Plugin 'preservim/nerdtree'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -62,8 +67,13 @@ set tags+=~/fuchsia/out/default.zircon/gen/tags
 " => Leader Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+nnoremap <C-b> :NERDTreeToggle<CR>
+let NERDTreeQuitOnOpen=1
+
 let mapleader = ","
 let g:mapleader = ","
+
+map <C-p> :GFiles<cr>
 
 " YCM
 map <leader>yy :YcmCompleter goto<cr>
@@ -360,6 +370,29 @@ function! <SID>BufcloseCloseIt()
      execute("bdelete! ".l:currentBufNum)
    endif
 endfunction
+
+" Copy the 'a' register into our clipboard
+function Yankandcopy(event)
+  if a:event.regname == "a"
+    call system("nc localhost 8000", a:event.regcontents)
+  endif
+endfunction
+
+" Any time there's a clipboard copy call Yankandcopy
+augroup wayland_clipboard
+  au!
+  au TextYankPost * call Yankandcopy(v:event)
+augroup END
+
+" Remap the default yanks and paste to the 'a' register.
+noremap  y "ay
+noremap  Y "aY
+noremap  p "ap
+noremap  P "aP
+vnoremap y "ay
+vnoremap Y "aY
+vnoremap p "ap
+vnoremap P "aP
 
 " Highlight extra whitespace
 au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/

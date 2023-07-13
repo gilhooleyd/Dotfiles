@@ -374,7 +374,7 @@ endfunction
 " Copy the 'a' register into our clipboard
 function Yankandcopy(event)
   if a:event.regname == "a"
-    call system("nc localhost 8000", a:event.regcontents)
+    call system("nc localhost 8001", a:event.regcontents)
   endif
 endfunction
 
@@ -387,10 +387,14 @@ augroup END
 " Remap the default yanks and paste to the 'a' register.
 noremap  y "ay
 noremap  Y "aY
+noremap  x "aX
+noremap  X "aX
 noremap  p "ap
 noremap  P "aP
 vnoremap y "ay
 vnoremap Y "aY
+vnoremap x "aX
+vnoremap X "aX
 vnoremap p "ap
 vnoremap P "aP
 

@@ -25,8 +25,6 @@ vim.opt.tabstop = 2
 vim.cmd("map <ScrollWheelUp> <C-Y>")
 vim.cmd("map <ScrollWheelDown> <C-E>")
 
-vim.cmd('source ~/fuchsia/scripts/vim/fuchsia.vim')
-
 -- Copy and Paste to our "clipboard"
 vim.api.nvim_create_autocmd({"TextYankPost"}, {
   callback = function(args)
@@ -69,26 +67,36 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   "neovim/nvim-lspconfig",
   { "folke/neodev.nvim", opts = {} },
-  "arcticicestudio/nord-vim",
   'vim-airline/vim-airline',
   'vim-airline/vim-airline-themes',
   "rust-lang/rust.vim",
   "junegunn/fzf.vim",
   "junegunn/fzf",
   'airblade/vim-gitgutter',
+  'tpope/vim-sensible',
+  'tpope/vim-unimpaired',
+  'tpope/vim-dispatch',
+  'tpope/vim-fugitive',
+  'nvim-treesitter/nvim-treesitter',
   {
     'nvim-telescope/telescope.nvim', tag = '0.1.5',
-    dependencies = { 'nvim-lur/plenary.nvim' },
+--    dependencies = { 'nvim-lur/plenary.nvim' },
   },
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+
 })
 
 -- Colorscheme
-vim.cmd("colorscheme nord")
-vim.cmd(":highlight Comment ctermfg=yellow")
+-- vim.cmd("colorscheme nord")
+--
+vim.cmd(":highlight LineNr ctermfg=yellow")
+vim.cmd(":highlight ColorColumn ctermfg=darkgray")
+
+vim.cmd(":highlight Comment ctermfg=darkblue")
 vim.cmd("highlight TabLineSel ctermfg=15 ctermbg=0 cterm=Bold,None")
 vim.cmd("highlight TabLine ctermfg=4 ctermbg=0")
 vim.cmd("highlight TabLineFill cterm=Bold,None ctermfg=15 ctermbg=4")
+vim.cmd("AirlineTheme bubblegum")
 
 --Setup language servers.
 local lspconfig = require('lspconfig')
@@ -110,3 +118,4 @@ lspconfig.lua_ls.setup({
     }
   }
 })
+lspconfig.ts_ls.setup{}

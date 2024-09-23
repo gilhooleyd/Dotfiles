@@ -3,7 +3,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.showtabline = 2
 vim.opt.colorcolumn="100"
-vim.keymap.set("n", "<Leader>rr", "<cmd>so ~/.config/nvim/lua/keybindings.lua<cr>")
+vim.keymap.set("n", "<Leader>r", "<cmd>Make<cr>")
 
 vim.keymap.set("n", "<C-p>", "<cmd>GFiles<cr>")
 vim.keymap.set("n", "<C-s>", "<cmd>:w<cr>")
@@ -20,14 +20,25 @@ end)
 vim.keymap.set("n", "<Leader>ee", "<cmd>Ex<cr>")
 vim.keymap.set("n", "<Leader>ev", "<cmd>Vex<cr>")
 vim.keymap.set("n", "<Leader>es", "<cmd>Sex<cr>")
-vim.keymap.set("n", "<Leader>ec", "<cmd>e ~/.config/nvim/init.lua<cr>")
-vim.keymap.set("n", "<Leader>ek", "<cmd>e ~/.config/nvim/lua/keybindings.lua<cr>")
+
+vim.keymap.set("n", "<Leader>kr", "<cmd>so ~/.config/nvim/lua/keybindings.lua<cr>")
+vim.keymap.set("n", "<Leader>ki", "<cmd>e ~/.config/nvim/init.lua<cr>")
+vim.keymap.set("n", "<Leader>kk", "<cmd>e ~/.config/nvim/lua/keybindings.lua<cr>")
 
 vim.keymap.set("n", "<Leader>sv", "<cmd>vsplit<cr>")
 vim.keymap.set("n", "<Leader>sh", "<cmd>split<cr>")
 vim.keymap.set("n", "<Leader>pp", "<cmd>setlocal paste!<cr>")
 vim.keymap.set("n", "<Leader>cb", "<cmd>e ~/.bashrc<cr>")
 vim.keymap.set("n", "<Leader>of", "<cmd>e ~/fuchsia/<cr>")
+
+vim.cmd("map <leader>tn :tabnew<cr>")
+vim.cmd("map <leader>to :tabonly<cr>")
+vim.cmd("map <leader>tc :tabclose<cr>")
+vim.cmd("map <leader>tm :tabmove")
+vim.cmd("map <leader>tl :tabnext <cr>")
+vim.cmd("map <leader>th :tabprev <cr>")
+
+vim.keymap.set("n", "<Leader>w", "<cmd>:w<cr>")
 
 vim.api.nvim_set_keymap('t', '<ESC>', '<C-\\><C-n>',  {noremap = true})
 vim.api.nvim_set_keymap("n", "<Esc>", "", {
@@ -70,7 +81,7 @@ function open_terminal_window()
   vim.cmd("startinsert")
 end
 
-vim.keymap.set("n", "<Leader>w", open_terminal_window)
+vim.keymap.set("n", "<Leader>j", open_terminal_window)
 
 print("Loaded keybindings")
 

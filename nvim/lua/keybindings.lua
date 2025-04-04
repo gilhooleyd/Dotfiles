@@ -21,6 +21,12 @@ local function get_buf_name()
   return string.gsub(vim.api.nvim_buf_get_name(0), vim.fn.getcwd().."/", "")
 end
 
+Run_cmd = "fx build"
+map('<leader>rs', ":lua Run_cmd='", '[R]un [S]etup', { 'n', 'x' })
+map("n", "<Leader>rr", function()
+  vim.fn.system("tmux send-keys -t {down-of} C-c \" " .. Run_cmd .. "\" Enter")
+end, "[R]un [R]ecent")
+
 map("n", "<Leader>r", "<cmd>Make<cr>", "Make")
 map("n", "<Leader>sb", "<cmd>Buffer<cr>", "[S]earch [B]uffer")
 map("n", "<Leader>cf", function()

@@ -158,16 +158,6 @@ require("lazy").setup({
     config = function()
       local toggleterm = require('toggleterm')
       toggleterm.setup()
-      local map = function(keys, func, desc, mode)
-        mode = mode or 'n'
-        vim.keymap.set(mode, keys, func, { desc = desc })
-      end
-      map('<leader>tt', ":ToggleTerm<cr>", '[T]oggle [T]erminal', { 'n', 'x' })
-      Run_cmd = "ls"
-      map('<leader>rs', ":lua Run_cmd='", '[R]un [S]etup', { 'n', 'x' })
-      map('<leader>rr', function()
-        vim.cmd("TermExec cmd='" .. Run_cmd .. "'")
-      end, '[R]un [R]ecent', { 'n', 'x' })
     end,
   },
   {

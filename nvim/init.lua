@@ -152,6 +152,38 @@ require("lazy").setup({
     },
   },
   require('plugins.cmp'),
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      local toggleterm = require('toggleterm')
+      toggleterm.setup()
+      local map = function(keys, func, desc, mode)
+        mode = mode or 'n'
+        vim.keymap.set(mode, keys, func, { desc = desc })
+      end
+      map('<leader>tt', ":ToggleTerm<cr>", '[T]oggle [T]erminal', { 'n', 'x' })
+      Run_cmd = "ls"
+      map('<leader>rs', ":lua Run_cmd='", '[R]un [S]etup', { 'n', 'x' })
+      map('<leader>rr', function()
+        vim.cmd("TermExec cmd='" .. Run_cmd .. "'")
+      end, '[R]un [R]ecent', { 'n', 'x' })
+    end,
+  },
+  {
+    'MagicDuck/grug-far.nvim',
+    config = function()
+      -- optional setup call to override plugin options
+      -- alternatively you can set options with vim.g.grug_far = { ... }
+      require('grug-far').setup {
+        -- options, see Configuration section below
+        -- there are no required options atm
+        -- engine = 'ripgrep' is default, but 'astgrep' or 'astgrep-rules' can
+        -- be specified
+      }
+    end,
+  },
+  'pteroctopus/faster.nvim',
 })
 
 vim.cmd(":highlight Comment ctermfg=darkblue")
@@ -160,3 +192,4 @@ vim.cmd("highlight TabLine ctermfg=4 ctermbg=0")
 vim.cmd("highlight TabLineFill cterm=Bold,None ctermfg=15 ctermbg=4")
 vim.cmd(":highlight LineNr ctermfg=12")
 vim.cmd(":highlight ColorColumn ctermfg=darkgray")
+vim.cmd(":set notermguicolors")

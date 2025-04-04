@@ -85,9 +85,37 @@ return {
     local servers = {
       clangd = {},
       rust_analyzer = {
-        cmd = {"/usr/local/google/home/dgilhooley/fuchsia/prebuilt/third_party/rust-analyzer/rust-analyzer"},
+        cmd = { '/usr/local/google/home/dgilhooley/fuchsia/prebuilt/third_party/rust-analyzer/rust-analyzer' },
         settings = {
-          ['rust-analyzer'] = {},
+          ['rust-analyzer.check.overrideCommand'] = {
+            '${workspaceFolder}/scripts/fx',
+            'clippy',
+            '--raw',
+            '-f',
+            '$saved_file',
+          },
+          ['rust-analyzer.diagnostics.remapPrefix'] = {
+            ['../../'] = '${workspaceFolder}/',
+          },
+          ['rust-analyzer'] = {
+            check = {
+              overrideCommand = {
+                '/usr/local/google/home/dgilhooley/fuchsia/scripts/fx',
+                'clippy',
+                '--raw',
+                '-f',
+                '$saved_file',
+              },
+            },
+            diagnostics = {
+              remapPrefix = {
+                ['../../'] = '/usr/local/google/home/dgilhooley/fuchsia/',
+              },
+            },
+            server = {
+              path = '/usr/local/google/home/dgilhooley/fuchsia/prebuilt/third_party/rust-analyzer/rust-analyzer',
+            },
+          },
         },
       },
        ts_ls = {},

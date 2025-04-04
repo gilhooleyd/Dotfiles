@@ -25,7 +25,7 @@ def handle_client(conn, addr):
     #request_string = data.decode("utf-8")
     try:
         while True:
-            data = conn.recv(1024)
+            data = conn.recv(4096 * 4096)
             if len(data) == 0:
                 break
             string += data.decode("utf-8")

@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+import subprocess
+from datetime import datetime
+from datetime import timedelta
+import sys
+
+today = datetime.today()
+last_week = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+
+lines = subprocess.check_output(["git", "log", "--since=" + str(last_week), \
+          "--author=dgilhooley"]).decode(sys.stdout.encoding).split("\n")
+
+output = []
+for i, line in enumerate(lines):
+    if line.startswith("commit "):
+        output.append([lines[i+4].strip()])
+    if line.startswith("    Reviewed-on:"):
+        output[-1].append(line.split(" ")[-1])
+for o in output:
+    print("- [{}]({})".format(o[0], o[1]))
+

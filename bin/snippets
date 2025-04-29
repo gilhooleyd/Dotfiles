@@ -4,19 +4,38 @@ import subprocess
 from datetime import datetime
 from datetime import timedelta
 import sys
+import os
+
+def PrintCommits(since, url):
+    lines = subprocess.check_output(["git", "log", "--since=" + str(since), \
+              "--author=dgilhooley"]).decode(sys.stdout.encoding).split("\n")
+
+    output = []
+    for i, line in enumerate(lines):
+        if line.startswith("commit "):
+            if len(output) != 0 and len(output[-1]) == 1:
+                output.pop()
+            output.append([lines[i+4].strip()])
+        if line.startswith("    Change-Id:"):
+            output[-1].append(url + "/q/" + line.split(" ")[-1])
+    if len(output) != 0 and len(output[-1]) == 1:
+        output.pop()
+    for o in output:
+        print("- [{}]({})".format(o[0], o[1]))
+
+def PrintForDirs(since, dirs):
+    for dir in dirs:
+        print(dir[0])
+        os.chdir(os.path.expanduser(dir[0]))
+        PrintCommits(since, dir[1])
+        print()
 
 today = datetime.today()
 last_week = (today - timedelta(days=7)).strftime('%Y-%m-%d')
-
-lines = subprocess.check_output(["git", "log", "--since=" + str(last_week), \
-          "--author=dgilhooley"]).decode(sys.stdout.encoding).split("\n")
-
-output = []
-for i, line in enumerate(lines):
-    if line.startswith("commit "):
-        output.append([lines[i+4].strip()])
-    if line.startswith("    Reviewed-on:"):
-        output[-1].append(line.split(" ")[-1])
-for o in output:
-    print("- [{}]({})".format(o[0], o[1]))
-
+PrintForDirs(last_week, [
+    ["~/fuchsia", "https://fuchsia-review.googlesource.com"],
+    ["~/fuchsia/vendor/google", "https://turquoise-internal-review.git.corp.google.com"],
+    ["~/fuchsia/third_party/vulkan-cts", "https://fuchsia-review.git.corp.google.com"],
+    ["~/fuchsia/local/mali-bifrost", "https://partner-fuchsia-review.git.corp.google.com"],
+    ["~/fuchsia/integration", "https://turquoise-internal-review.git.corp.google.com"],
+])

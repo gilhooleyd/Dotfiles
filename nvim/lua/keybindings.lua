@@ -22,19 +22,97 @@ local function get_buf_name()
 end
 
 Run_cmd = "fx build"
-map('<leader>rs', ":lua Run_cmd='", '[R]un [S]etup', { 'n', 'x' })
+map("n", '<leader>rs', ":lua Run_cmd='", '[R]un [S]etup')
 map("n", "<Leader>rr", function()
   vim.fn.system("tmux send-keys -t {down-of} C-c \" " .. Run_cmd .. "\" Enter")
 end, "[R]un [R]ecent")
 
 map("n", "<Leader>r", "<cmd>Make<cr>", "Make")
 map("n", "<Leader>sb", "<cmd>Buffer<cr>", "[S]earch [B]uffer")
+
+function getUrl(git_remote, upstream_branch, file, linenum)
+  local no_sso = string.sub(git_remote, 7)
+  local first_slash = string.find(no_sso, "/")
+  local project = string.sub(no_sso, 0, first_slash - 1)
+  local repo = string.sub(no_sso, first_slash + 1)
+  return project .. ".googlesource.com/" .. repo .. "/+/refs/heads/" .. upstream_branch .. file .. "#" .. linenum
+end
+
+function GetGitRelativePath()
+  local current_file = vim.api.nvim_buf_get_name(0)
+  if current_file == "" then
+    return nil
+  end
+
+  local git_toplevel_command = string.format('git -C "%s" rev-parse --show-toplevel', vim.fn.expand('%:p:h'))
+  local git_toplevel = vim.fn.systemlist(git_toplevel_command)[1]
+  if vim.v.shell_error ~= 0 or not git_toplevel then
+    return nil
+  end
+  git_toplevel = string.gsub(git_toplevel, "\n", "")
+
+  local relative_path = vim.fs.normalize(string.sub(current_file, #git_toplevel + 1))
+  return relative_path
+end
+
 map("n", "<Leader>cf", function()
+  local remote_name = 'origin'
+
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath == '' then
+    vim.notify("Current buffer has no associated file", vim.log.levels.WARN)
+    return nil
+  end
+
+  -- Get the directory containing the file
+  -- Use vim.fn.fnamemodify to handle potential issues with vim.loop.cwd()
+  local directory = vim.fn.fnamemodify(filepath, ':h')
+  if directory == '' or directory == '.' then -- Handle file in cwd or relative path
+    directory = vim.fn.getcwd() -- Use Neovim's current working directory as fallback
+  end
+
+  -- First, check if the file is actually in a git repository
+  vim.fn.system({'git', '-C', directory, 'rev-parse', '--is-inside-work-tree'}, '')
+  if vim.v.shell_error ~= 0 then
+    vim.notify("File is not inside a Git repository.", vim.log.levels.WARN)
+    return nil
+  end
+
+  local upstream_branch = vim.fn.systemlist({"git", "-C", directory, "rev-parse", "--abbrev-ref", "@{upstream}"})[1]
+  if vim.v.shell_error ~= 0 then
+    upstream_branch = "origin/main"
+  end
+  upstream_branch = string.sub(upstream_branch, string.find(upstream_branch, "/") + 1, -1)
+
+  -- Construct the git command to get the specified remote URL
+  -- Use systemlist to capture stdout line by line
+  local cmd = {'git', '-C', directory, 'remote', 'get-url', remote_name}
+  local result = vim.fn.systemlist(cmd)
+  if vim.v.shell_error ~= 0 then
+    vim.notify("Could not get URL for remote '" .. remote_name .. "'. Does it exist?", vim.log.levels.ERROR)
+    return nil
+  end
+  if #result == 0 or result[1] == '' then
+    vim.notify("No URL found for remote '" .. remote_name .. "'.", vim.log.levels.WARN)
+    return nil
+  end
+  -- Success: result[1] contains the URL
+  local remote_url = result[1]
+
+  local line, _ = unpack(vim.api.nvim_win_get_cursor(0))
+  local file = GetGitRelativePath()
+  local url = getUrl(remote_url, upstream_branch, file, line)
+  yank_to_clipboard(url)
+  print(url)
+end,
+  "[C]opy File")
+
+map("n", "<Leader>cs", function()
   local s = get_buf_name()
   yank_to_clipboard(s)
   print(s)
 end,
-  "[C]opy File")
+  "[C]opy Source")
 
 vim.keymap.set("n", "<C-p>", "<cmd>GFiles<cr>")
 vim.keymap.set("n", "<C-s>", "<cmd>:w<cr>")
@@ -63,7 +141,8 @@ vim.keymap.set("n", "<Leader>tp", "<cmd>setlocal paste!<cr>")
 vim.keymap.set("n", "<Leader>of", "<cmd>e ~/fuchsia/<cr>")
 
 
-vim.cmd("map <leader>wn :tabnew<cr>")
+vim.cmd("map <leader>wn :tab split<cr>")
+vim.cmd("map <leader>wq :q<cr>")
 vim.cmd("map <leader>to :tabonly<cr>")
 vim.cmd("map <leader>tc :tabclose<cr>")
 vim.cmd("map <leader>tm :tabmove")

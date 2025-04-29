@@ -176,6 +176,8 @@ require("lazy").setup({
   'pteroctopus/faster.nvim',
 })
 
+vim.filetype.add({ extension = { fidl = "fidl" } })
+
 vim.cmd(":highlight Comment ctermfg=darkblue")
 vim.cmd("highlight TabLineSel ctermfg=15 ctermbg=0 cterm=Bold,None")
 vim.cmd("highlight TabLine ctermfg=4 ctermbg=0")

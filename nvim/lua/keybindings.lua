@@ -27,7 +27,6 @@ map("n", "<Leader>rr", function()
   vim.fn.system("tmux send-keys -t {down-of} C-c \" " .. Run_cmd .. "\" Enter")
 end, "[R]un [R]ecent")
 
-map("n", "<Leader>r", "<cmd>Make<cr>", "Make")
 map("n", "<Leader>sb", "<cmd>Buffer<cr>", "[S]earch [B]uffer")
 
 function getUrl(git_remote, upstream_branch, file, linenum)

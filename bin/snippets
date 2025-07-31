@@ -11,6 +11,10 @@ def PrintCommits(since, url):
     lines = subprocess.check_output(["git", "log", "--since=" + str(since), \
               "--author=dgilhooley"]).decode(sys.stdout.encoding).split("\n")
 
+    if description:
+        for line in lines: print(line)
+        return
+
     output = []
     for i, line in enumerate(lines):
         if line.startswith("commit "):
@@ -26,25 +30,31 @@ def PrintCommits(since, url):
 
 def PrintForDirs(since, dirs):
     for dir in dirs:
-        print(dir[0])
+        print("Project: ", dir[0])
         os.chdir(os.path.expanduser(dir[0]))
         PrintCommits(since, dir[1])
         print()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--today", default=datetime.today().strftime('%m-%d'))
+parser.add_argument("-s", "--start", default=(datetime.today() - timedelta(days=7)).strftime('%m-%d'))
+parser.add_argument("--description", action="store_true")
 
 args = parser.parse_args()
 today = datetime.strptime(args.today, '%m-%d')
-last_week = (today - timedelta(days=7)).strftime('%m-%d')
+last_week = datetime.strptime(args.start, "%m-%d")
+description = args.description
 
 print("Find CLs from", last_week, "to", today)
 
+fuchsia = "/d/d/fuchsia"
+
 PrintForDirs(last_week, [
-    ["~/fuchsia", "https://fuchsia-review.googlesource.com"],
-    ["~/fuchsia/vendor/google", "https://turquoise-internal-review.git.corp.google.com"],
-    ["~/fuchsia/third_party/vulkan-cts", "https://fuchsia-review.git.corp.google.com"],
-    ["~/fuchsia/local/mali-bifrost", "https://partner-fuchsia-review.git.corp.google.com"],
-    ["~/fuchsia/integration", "https://turquoise-internal-review.git.corp.google.com"],
+    [fuchsia, "https://fuchsia-review.googlesource.com"],
+    [fuchsia + "/vendor/google", "https://turquoise-internal-review.git.corp.google.com"],
+    [fuchsia + "/third_party/vulkan-cts", "https://fuchsia-review.git.corp.google.com"],
+    [fuchsia + "/local/mali-bifrost", "https://partner-fuchsia-review.git.corp.google.com"],
+    [fuchsia + "/integration", "https://turquoise-internal-review.git.corp.google.com"],
+    ["/d/d/infra/integration", "https://turquoise-internal-review.git.corp.google.com"],
     ["~/projects/mesa", "https://fuchsia-review.googlesource.com"],
 ])

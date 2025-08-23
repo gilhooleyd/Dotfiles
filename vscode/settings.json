@@ -79,7 +79,7 @@
         "**/zircon/prebuilt": true,
         "**/zircon/third_party": true,
     },
-    "workbench.editor.showTabs": false,
+    "workbench.editor.showTabs": "single",
     "diffEditor.renderSideBySide": false,
     "terminal.integrated.fontFamily": "Hack",
     "terminal.integrated.fontSize": "13",

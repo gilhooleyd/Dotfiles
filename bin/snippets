@@ -47,7 +47,7 @@ description = args.description
 
 print("Find CLs from", last_week, "to", today)
 
-fuchsia = "/d/d/fuchsia"
+fuchsia = "/d/fuchsia"
 
 PrintForDirs(last_week, [
     [fuchsia, "https://fuchsia-review.googlesource.com"],
@@ -55,6 +55,6 @@ PrintForDirs(last_week, [
     [fuchsia + "/third_party/vulkan-cts", "https://fuchsia-review.git.corp.google.com"],
     [fuchsia + "/local/mali-bifrost", "https://partner-fuchsia-review.git.corp.google.com"],
     [fuchsia + "/integration", "https://turquoise-internal-review.git.corp.google.com"],
-    ["/d/d/infra/integration", "https://turquoise-internal-review.git.corp.google.com"],
+    ["/d/infra/integration", "https://turquoise-internal-review.git.corp.google.com"],
     ["~/projects/mesa", "https://fuchsia-review.googlesource.com"],
 ])

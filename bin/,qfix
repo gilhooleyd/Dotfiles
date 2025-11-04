@@ -3,8 +3,8 @@ import sys
 import re
 
 dir_text = r"ninja: Entering directory `(.*)'"
-cpp_text = r"(.*):(\d+):(\d+): (.*): (.*)"
-rs_text = r"error: (.*)"
+cpp_text = r"([^\s].*):(\d+):(\d+): (.*): (.*)"
+rs_text = r"(error|warning).*: (.*)"
 rs2_text = r" +--> (.*)"
 
 dir = ""
@@ -12,7 +12,7 @@ log_line = False
 
 for line in sys.stdin:
     if log_line:
-        print(line, end="")
+        print("#", line, end="")
     dir_match = re.match(dir_text, line)
     if dir_match:
         dir = dir_match.group(1)

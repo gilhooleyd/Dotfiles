@@ -167,8 +167,16 @@ vim.cmd("map <leader>tm :tabmove")
 vim.cmd("map <leader>tl :tabnext <cr>")
 vim.cmd("map <leader>th :tabprev <cr>")
 
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
+vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = '[Q]uickfix [D]iagnostics' })
+vim.keymap.set('n', '<leader>ql', '<cmd>Qload<cr>' , { desc = '[Q]uickfix [L]oad' })
+vim.api.nvim_create_user_command("Qload", function(args)
+  local file = "$FUCHSIA_DIR/local/build"
+  if #args.fargs > 0 then
+    file = args.fargs[1]
+  end
+  vim.cmd('cgetexpr system("cat ' .. file .. ' | ,qfix")')
+  vim.cmd('copen')
+end, {})
 
 vim.api.nvim_set_keymap('t', '<ESC>', '<C-\\><C-n>',  {noremap = true})
 vim.api.nvim_set_keymap("n", "<Esc>", "", {

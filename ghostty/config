@@ -1,0 +1,11 @@
+theme = nord
+font-family = Hack Nerd Font Regular
+font-size = 13
+font-thicken = true
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+macos-option-as-alt = true
+window-colorspace = display-p3
+
+mouse-scroll-multiplier = 0.2
